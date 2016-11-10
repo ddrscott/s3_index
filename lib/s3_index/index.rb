@@ -4,5 +4,9 @@ module S3Index
   # here for easy querying.
   class Index < ActiveRecord::Base
     self.table_name = 's3_index'
+
+    def download!(**args)
+      ::S3Index.download!(index: self, **args)
+    end
   end
 end

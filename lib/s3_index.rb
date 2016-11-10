@@ -28,8 +28,7 @@ module S3Index
   end
 
   def upload!(s3: default_client, bucket:, src:, dst: src)
-    resource = Aws::S3::Resource.new
-    obj = resource.bucket(bucket).object(dst)
+    obj = s3.bucket(bucket).object(dst)
 
     index = index_for_src(src)
     index_attrs = index_attributes_for(src)
@@ -52,6 +51,20 @@ module S3Index
     index
   end
 
+  def download!(s3: default_client, src: nil, s3_url: nil, index: nil, dst: nil)
+    src || s3_url || index ||
+      raise(ArgumentError, 'src:, s3_url:, or index: must be provided!')
+
+    index ||=
+      begin
+        finder = src ? { origin_url: src } : { s3_url: s3_url }
+        Index.find_by(finder) || raise(ActiveRecord::RecordNotFound, "S3Index::Index not found by #{finder}")
+      end
+
+    obj = s3.bucket(index.s3_bucket).object(index.origin_url)
+    obj.get(response_target: dst || index.origin_url)
+  end
+
   def index_for_src(src)
     Index.where(origin_url: src).first_or_initialize
   end
@@ -71,11 +84,12 @@ module S3Index
 
   def new_client
     credentials = Aws::SharedCredentials.new(profile_name: 'default')
-    Aws::S3::Client.new(
+    client = Aws::S3::Client.new(
       credentials: credentials,
       http_wire_trace: $DEBUG,
       logger: logger
     )
+    Aws::S3::Resource.new(client: client)
   end
 
   def default_client=(client)

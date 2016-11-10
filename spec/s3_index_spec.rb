@@ -61,4 +61,39 @@ describe S3Index do
       expect { S3Index.upload!(bucket: bucket, src: 'path/not/found') }.to raise_error(Errno::ENOENT)
     end
   end
+
+  describe '#download!' do
+    describe 'without uploaded file' do
+      it "can't download unregistered files" do
+        expect { S3Index.download!(src: 'path/not/found') }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    describe 'with uploaded file' do
+      before do
+        S3Index.upload!(bucket: bucket, src: src) 
+      end
+      let(:last_index) { S3Index::Index.last }
+
+      it 'download by src' do
+        expect_any_instance_of(Aws::S3::Object).to receive(:get).with(response_target: src).once
+        S3Index.download!(src: src)
+      end
+
+      it 'download by index' do
+        expect_any_instance_of(Aws::S3::Object).to receive(:get).with(response_target: src).once
+        last_index.download!
+      end
+
+      it 'download by s3_url' do
+        expect_any_instance_of(Aws::S3::Object).to receive(:get).with(response_target: src).once
+        S3Index.download!(s3_url: last_index.s3_url)
+      end
+
+      it 'download to different destination' do
+        expect_any_instance_of(Aws::S3::Object).to receive(:get).with(response_target: 'spec/over-here').once
+        last_index.download!(dst: 'spec/over-here')
+      end
+    end
+  end
 end
