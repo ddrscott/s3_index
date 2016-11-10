@@ -14,24 +14,21 @@
 ActiveRecord::Schema.define(version: 20161109000001) do
 
   create_table "s3_index", force: :cascade do |t|
-    t.integer  "owner_id"
+    t.string   "origin_url"
     t.string   "file_name"
     t.string   "content_type"
-    t.string   "md5sum"
+    t.string   "md5"
     t.integer  "size"
-    t.string   "origin_url"
     t.string   "s3_url"
     t.string   "s3_bucket"
-    t.string   "s3_env"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
 
   add_index "s3_index", ["content_type"], name: "index_s3_index_on_content_type"
   add_index "s3_index", ["file_name"], name: "index_s3_index_on_file_name"
-  add_index "s3_index", ["md5sum"], name: "index_s3_index_on_md5sum"
+  add_index "s3_index", ["md5"], name: "index_s3_index_on_md5"
   add_index "s3_index", ["origin_url"], name: "index_s3_index_on_origin_url"
-  add_index "s3_index", ["owner_id"], name: "index_s3_index_on_owner_id"
   add_index "s3_index", ["s3_url"], name: "index_s3_index_on_s3_url"
 
 end

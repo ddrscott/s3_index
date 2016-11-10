@@ -7,6 +7,8 @@
 /pkg/
 /spec/reports/
 /tmp/
-dev.db
-test.db
+dev.db*
+test.db*
 log/*
+spec/dummy.txt
+.rubocop.yml

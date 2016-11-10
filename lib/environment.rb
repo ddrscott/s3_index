@@ -9,5 +9,7 @@ Bundler.setup(:default, ENV['S3_INDEX_ENV'])
 
 require 'active_record'
 require 'active_support/all'
+require 'aws-sdk'
+require 'mime-types'
 
 ActiveRecord::Base.raise_in_transactional_callbacks = true
