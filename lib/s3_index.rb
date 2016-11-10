@@ -27,6 +27,7 @@ module S3Index
     @logger = logger
   end
 
+  # Upload file to s3 bucket and register it to the Index model.
   def upload!(s3: default_client, bucket:, src:, dst: src)
     obj = s3.bucket(bucket).object(dst)
 
@@ -51,6 +52,8 @@ module S3Index
     index
   end
 
+  # Download file from s3 bucket back on Index model.
+  # src and s3_url are quick options to find an Index model to download.
   def download!(s3: default_client, src: nil, s3_url: nil, index: nil, dst: nil)
     src || s3_url || index ||
       raise(ArgumentError, 'src:, s3_url:, or index: must be provided!')
