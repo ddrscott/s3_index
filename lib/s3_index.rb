@@ -6,6 +6,7 @@ module S3Index
   extend ActiveSupport::Autoload
 
   autoload :Index
+  autoload :Accessor
 
   module_function
 
@@ -97,6 +98,12 @@ module S3Index
 
   def default_client=(client)
     @s3_client = client
+  end
+
+  # Let the model handle everything else
+  def method_missing(meth, *args, &block)
+    super unless Index.respond_to?(meth)
+    Index.public_send(meth, *args, &block)
   end
 end
 

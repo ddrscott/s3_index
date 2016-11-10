@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe S3Index do
 
+  after(:all) { FileUtils.rm_rf 'spec/dummy.txt' }
+
   let(:bucket) { 's3-index-test-fake' }
   let(:src) { File.absolute_path 'spec/dummy.txt' }
   let(:uploaded) { S3Index.upload!(bucket: bucket, src: src) }
@@ -71,7 +73,7 @@ describe S3Index do
 
     describe 'with uploaded file' do
       before do
-        S3Index.upload!(bucket: bucket, src: src) 
+        S3Index.upload!(bucket: bucket, src: src)
       end
       let(:last_index) { S3Index::Index.last }
 
@@ -94,6 +96,12 @@ describe S3Index do
         expect_any_instance_of(Aws::S3::Object).to receive(:get).with(response_target: 'spec/over-here').once
         last_index.download!(dst: 'spec/over-here')
       end
+    end
+  end
+
+  describe '#method_missing' do
+    it 'can count' do
+      expect(described_class.count).to eq(0)
     end
   end
 end
