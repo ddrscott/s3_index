@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Scott Pierce']
   spec.email         = ['ddrscott@gmail.com']
 
-  spec.summary       = 'Maintain an index of s3 files in the database.'
-  spec.homepage      = 'https://ddrscott.github.com/s3_index'
+  spec.summary       = 'Maintains an index of S3 files an ActiveRecord model'
+  spec.homepage      = 'https://github.com/ddrscott/s3_index'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
