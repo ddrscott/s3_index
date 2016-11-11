@@ -1,6 +1,6 @@
 # S3Index
 
-Keeps an index of AWS S3 objects in a database table as objects are uploaded to AWS.
+This gem is intended to provide a catalog of S3 objects in order to easily query the metadata about those objects. S3 can provide a list of objects, but that is slow. With S3Index, you can save and query that list using standard database tools. 
 
 ```sql
 sqlite> .headers on
@@ -12,12 +12,11 @@ sqlite> SELECT * FROM s3_index;
 |1|README.md|README.md|text/plain|58f96630cec6e641fcb440abde5d1f11|1334|https://example.s3.amazonaws.com/README.md|example|2016-11-10 10:11:42.871147|2016-11-10 10:11:42.871147|
 |2|/data/images/avatar.png|avatar.png|image/png|9a84d4c8fdf5a74cacba47346602a38e|35|https://example.s3.amazonaws.com/data/images/avatar.png|example|2016-11-10 20:52:46.011296|2016-11-10 20:53:22.884595|
 
-We also provide a simple ActiveRecord helper which provides an 
-`s3_index_accessor :data` to quickly attach data to an existing ActiveRecord.
-The feature is similar to Paperclip, CarrierWave and others, but with this gem
+We also provide a simple ActiveRecord helper to quickly attach data to an existing ActiveRecord model.
+The feature is similar to Paperclip, CarrierWave, and others, but with this gem
 we maintain a separate table that reflects what's stored on S3.
 
-The benefits of the `s3_index` table is fast querying and analytics around S3
+The benefits of the `s3_index` table are fast querying and analytics around S3
 object utilization. The table also keeps track of the data's origin for other auditing
 needs.
 
@@ -74,7 +73,7 @@ class Post < ActiveRecord::Base
 
   s3_index_accessor :featured_image,
                     cache_dir:   'tmp/cache/images',
-                    bucket:      'example-post-images'
+                    bucket:      'example-post-images',
                     s3_resource: Aws::S3::Resource.new
 end
 ```
@@ -88,7 +87,7 @@ end
 Use the attribute just like any other attribute:
 
 ```ruby
-# get the image data from some where
+# get the image data from somewhere
 image_data = parse_image_data(request)
 post = Post.create!(title: 'hello', featured_image: image_data)
 
